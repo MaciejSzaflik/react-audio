@@ -28,7 +28,7 @@ export class Rect implements Shape
     if(ctx == null)
       return;
 
-    ctx.fillStyle = "#FF0000";
+    ctx.fillStyle = this.color;
     ctx.fillRect(
       this.x,
       this.y,

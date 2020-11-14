@@ -1,15 +1,18 @@
 import React from "react";
 import {Button} from '@material-ui/core';
-import {TextField} from '@material-ui/core';
 import AudioGenerator from "../audioGenerator";
 import OctaveButtons from "./octaveButtons";
+import TrackButton from "./playTrackButton";
 import Canvas from "../canvasOperator/canvas";
 import { CanvasBridge } from "../canvasOperator/brige";
+import { EventType } from "../eventType";
+import { Event } from '@billjs/event-emitter';
 
 type CreateOctaveState = {
   generator : AudioGenerator;
   octaveButtons : JSX.Element;
-  number : number
+  trackButton : JSX.Element;
+  number : number;
 }
 
 class CreateOctave extends React.Component<{}, CreateOctaveState>{
@@ -25,6 +28,8 @@ class CreateOctave extends React.Component<{}, CreateOctaveState>{
     }
 
     let gen = new AudioGenerator();
+    gen.on(EventType.drawerReady, (evt) => this.onCanvasCreated(evt));
+
     let buttons = (
       <div>
         <OctaveButtons generator={gen} octave={0}></OctaveButtons>
@@ -38,11 +43,22 @@ class CreateOctave extends React.Component<{}, CreateOctaveState>{
     this.canvasRef = React.createRef();
     this.canvasBridge = new CanvasBridge(gen, gen.noteAtlas);
 
+    let trackButton = (
+      <div>
+        <TrackButton generator={gen} bridge={this.canvasBridge}/> 
+      </div>
+    )
+
     this.setState({
       generator : gen,
       octaveButtons : buttons,
       number : number,
+      trackButton : trackButton
     });
+  }
+
+  onCanvasCreated(evt: Event) {
+    this.canvasBridge.drawer = evt.data.drawer;
   }
 
   handleTextFieldChange(value:string) {
@@ -67,6 +83,7 @@ class CreateOctave extends React.Component<{}, CreateOctaveState>{
         <div>
           <Canvas width={400} height={400} eventEmitter={this.state.generator} ref={this.canvasRef}/>
           {this.state.octaveButtons}
+          {this.state.trackButton}
           {button}
         </div>
       );

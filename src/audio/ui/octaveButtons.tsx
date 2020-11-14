@@ -3,7 +3,6 @@ import Piece from "../piece";
 
 import AudioGenerator from "../audioGenerator";
 import NoteButton from "./noteButton";
-import TrackButton from "./playTrackButton";
 
 type OctaveProp = {
   generator : AudioGenerator;
@@ -37,7 +36,6 @@ class OctaveButtons extends React.Component<OctaveProp, OctaveState> {
     return (
       <div>
         {items}
-        <TrackButton generator={this.props.generator}/>
       </div>
     );
   }

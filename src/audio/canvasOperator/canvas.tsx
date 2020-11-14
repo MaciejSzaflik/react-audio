@@ -2,7 +2,6 @@ import { EventEmitter } from "@billjs/event-emitter";
 import React from "react";
 import { EventType } from "../eventType";
 import { Drawer } from "./drawer";
-import { Rect } from "./shape";
 
 interface CanvasProps {
   width: number;
@@ -41,7 +40,6 @@ class Canvas extends React.Component<CanvasProps> {
     if(this.canvas!==null && this.ctx!==null)
     {
       this.drawer = new Drawer(this.canvas, this.ctx);
-      this.drawer.shapes.push(new Rect(200,200,40,40,'#FF0000',0));
       this.drawer.drawAll();
 
       this.props.eventEmitter.fire(EventType.drawerReady, {'drawer':this.drawer, 'canvas':this.canvas});

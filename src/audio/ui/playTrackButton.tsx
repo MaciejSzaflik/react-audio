@@ -1,28 +1,29 @@
 import React from "react";
 import {Button} from '@material-ui/core';
-import Track from "../track/track";
 import AudioGenerator from "../audioGenerator";
-import Piece from "../piece";
-import { Duration } from "../track/notation";
+import { CanvasBridge } from "../canvasOperator/brige";
+import { EventType } from "../eventType";
 
 type TrackProp = {
   generator : AudioGenerator;
+  bridge : CanvasBridge;
 }
 
 class TrackButton extends React.Component<TrackProp> {
 
   playPiece() {
-    
-    let track = new Track();
-    track.addNote(new Piece("C0", Duration.Whole),1);
-    track.addNote(new Piece("C1", Duration.Whole),2);
-    track.addNote(new Piece("C0", Duration.Whole),3);
-    track.addNote(new Piece("C1", Duration.Whole),4);
-    this.props.generator.fromTrack(track);
+    if(this.props.bridge !== null && this.props.bridge.track !== null)
+      this.props.generator.fromTrack(this.props.bridge.track);
+  }
+
+  clear() {
+    if(this.props.generator !== null)
+      this.props.generator.fire(EventType.clearTrack);
   }
 
   render() {
     return (
+      <div>
         <Button 
           variant='contained' 
           color="primary" 
@@ -30,6 +31,15 @@ class TrackButton extends React.Component<TrackProp> {
         >
           Play Track
         </Button>
+
+        <Button 
+          variant='contained' 
+          color="primary" 
+          onClick={()=>{this.clear()}}
+        >
+          Clear
+        </Button>
+      </div>
     );
   }
 }
