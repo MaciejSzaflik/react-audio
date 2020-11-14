@@ -3,6 +3,8 @@ import {Button} from '@material-ui/core';
 import {TextField} from '@material-ui/core';
 import AudioGenerator from "../audioGenerator";
 import OctaveButtons from "./octaveButtons";
+import Canvas from "../canvasOperator/canvas";
+import { CanvasBridge } from "../canvasOperator/brige";
 
 type CreateOctaveState = {
   generator : AudioGenerator;
@@ -11,6 +13,8 @@ type CreateOctaveState = {
 }
 
 class CreateOctave extends React.Component<{}, CreateOctaveState>{
+  canvasBridge!: CanvasBridge;
+  canvasRef!: React.RefObject<Canvas>;
 
   createContexAndButtons()
   {
@@ -31,10 +35,13 @@ class CreateOctave extends React.Component<{}, CreateOctaveState>{
       </div>
     );
 
+    this.canvasRef = React.createRef();
+    this.canvasBridge = new CanvasBridge(gen, gen.noteAtlas);
+
     this.setState({
       generator : gen,
       octaveButtons : buttons,
-      number : number
+      number : number,
     });
   }
 
@@ -44,25 +51,8 @@ class CreateOctave extends React.Component<{}, CreateOctaveState>{
     });
   }
 
-  getSelectionField() : JSX.Element
-  {
-    return (
-    <TextField
-          id="standard-number"
-          label="Number"
-          type="number"
-          defaultValue="1"
-          variant="filled"
-          onChange={(e)=> this.handleTextFieldChange(e.target.value)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-    />)
-  }
-
   render() {
     let button: JSX.Element = (<Button color="primary" onClick={()=>{this.createContexAndButtons()}}>Start</Button>);
-    //let form: JSX.Element = this.getSelectionField();
     if(this.state == null || this.state.octaveButtons==null)
     {
       return (
@@ -75,6 +65,7 @@ class CreateOctave extends React.Component<{}, CreateOctaveState>{
     {
       return (
         <div>
+          <Canvas width={400} height={400} eventEmitter={this.state.generator} ref={this.canvasRef}/>
           {this.state.octaveButtons}
           {button}
         </div>

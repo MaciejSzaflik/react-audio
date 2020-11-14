@@ -3,12 +3,15 @@ import NoteAtlas from './noteAtlas';
 import Piece from './piece';
 import Track from './track/track';
 import TrackNote from './track/trackNote';
+import { EventEmitter } from "@billjs/event-emitter";
+import { EventType } from './eventType';
 
-class AudioGenerator {
+class AudioGenerator extends EventEmitter {
   public context : AudioContext;
   public noteAtlas : NoteAtlas;
   
   constructor() {
+    super();
     this.context = new AudioContext();
     this.noteAtlas = new NoteAtlas();
   }
@@ -30,6 +33,8 @@ class AudioGenerator {
       noteGen.createNote(this.context, 'sine', note.frequency ,piece.duration);
       noteGen.oscillator.start(0);
       noteGen.oscillator.stop(this.context.currentTime + piece.duration);
+      
+      this.fire(EventType.notePlayed, piece);
     }
   }
 
